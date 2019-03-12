@@ -1,0 +1,21 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+mysql = "*"
+mysql-connector = "*"
+mysqlclient = "*"
+sqlalchemy = "*"
+quandl = "*"
+matplotlib = "*"
+python = "*"
+pandas = "*"
+sqlaclchemy = "*"
+numpy = "*"
+
+[requires]
+python_version = "3.7.2"
