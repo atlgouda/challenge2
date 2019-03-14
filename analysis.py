@@ -1,14 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
+import matplotlib  # noqa
 from sqlalchemy import create_engine
 import math
 import matplotlib  # noqa
 #matplotlib.use('PS')  # noqa
-import matplotlib
-
-
 
 localhost = create_engine('mysql://root:password@localhost/solution')
 
@@ -95,6 +92,13 @@ def chart_contract(code_name):
 def chart_contracts(contract_root):
     df = get_contract_family(contract_root, field='px_last').fillna(method='ffill')
     pretty_plot(df, title=contract_root, ylabel='px_last')
+    print(df.head())
+
+
+def create_tables(contract_root):
+    df = get_contract_family(contract_root, field='px_last').fillna(method='ffill')
+    pretty_plot(df, title=contract_root, ylabel='px_last')
+    df.to_sql(contract_root, localhost, if_exists='replace', chunksize=250)
 
 
 if __name__ == '__main__':
@@ -126,4 +130,9 @@ if __name__ == '__main__':
     print (get_largest_annual_return('CME_NG'))
     print (get_largest_annual_return('CME_GC'))
 
+    create_tables("CME_CL")
+    create_tables("CME_ES")
+    create_tables("CME_NQ")
+    create_tables("CME_NG")
+    create_tables("CME_GC")
     chart_contracts("CME_CL")
