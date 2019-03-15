@@ -51,6 +51,18 @@ def get_largest_single_day_return(contract_root):
     })
 
 
+# def create_largest_daily_return_table(contract_root):
+#     df = get_largest_single_day_return(
+#         contract_root)
+#     df.to_sql(contract_root + "_lg_daily_ret", localhost, if_exists='replace', chunksize=250)
+
+
+# def create_tables(contract_root):
+#     df = get_contract_family(contract_root, field='px_last').fillna(method='ffill')
+#     pretty_plot(df, title=contract_root, ylabel='px_last')
+#     df.to_sql(contract_root, localhost, if_exists='replace', chunksize=250)
+
+
 def get_largest_annual_return(contract_root):
     contracts = get_contract_family(contract_root).replace(np.nan, 0)
     return pd.DataFrame({
@@ -97,8 +109,19 @@ def chart_contracts(contract_root):
 
 def create_tables(contract_root):
     df = get_contract_family(contract_root, field='px_last').fillna(method='ffill')
-    pretty_plot(df, title=contract_root, ylabel='px_last')
+    # pretty_plot(df, title=contract_root, ylabel='px_last')
     df.to_sql(contract_root, localhost, if_exists='replace', chunksize=250)
+
+
+def create_returns_tables(contract_root):
+    df = get_contract_family(contract_root, field='daily_return').fillna(method='ffill')
+    # pretty_plot(df, title=contract_root, ylabel='daily_return')
+    df.to_sql(contract_root + " returns", localhost, if_exists='replace', chunksize=250)
+
+
+# def create_ann_vol_tables(contract_root):
+#     df = get_annualized_vol(contract_root, field='contracts').fillna(method='ffill')
+#     df.to_sql(contract_root + "_ann_vol", localhost, if_exists='replace', chunksize=250)
 
 
 if __name__ == '__main__':
@@ -135,4 +158,13 @@ if __name__ == '__main__':
     create_tables("CME_NQ")
     create_tables("CME_NG")
     create_tables("CME_GC")
-    chart_contracts("CME_CL")
+
+    create_returns_tables("CME_CL")
+    create_returns_tables("CME_ES")
+    create_returns_tables("CME_NQ")
+    create_returns_tables("CME_NG")
+    create_returns_tables("CME_GC")
+
+    # create_ann_vol_tables("CME_CL")
+    # get_annualized_vol("CME_ES")
+    # create_largest_daily_return_table("CME_ES")
