@@ -41,6 +41,8 @@ def get_annualized_vol(contract_root):
 def get_trailing_1yr_vol(contract_root):
     contracts = get_contract_family(contract_root).replace(np.nan, 0)
     return (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
+    tr_1yr_vol_cont = (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
+    tr_1yr_vol_cont.to_csv(contract_root + "_tr_1yr_vol")
 
 
 def get_largest_single_day_return(contract_root):
