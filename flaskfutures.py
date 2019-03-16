@@ -13,9 +13,9 @@ def futures():
     return render_template('futures.html', title='Futures')
 
 
-@app.route("/ES_price")
-def es_price():
-    return render_template('ES_price.html', title='ES Price')
+@app.route("/ES")
+def es():
+    return render_template('ES.html', title='ES')
 
 
 @app.route("/CL_price")
