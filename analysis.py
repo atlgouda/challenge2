@@ -5,7 +5,7 @@ import matplotlib  # noqa
 from sqlalchemy import create_engine
 import math
 import matplotlib  # noqa
-#matplotlib.use('PS')  # noqa
+matplotlib.use('PS')  # noqa
 
 localhost = create_engine('mysql://root:password@localhost/solution')
 
