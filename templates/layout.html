@@ -29,9 +29,19 @@
                         <a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Contract:</a>
                 <!-- <a class="nav-item nav-link" href="#">S&P E-mini</a> -->
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/ES" id="navbarDropdownMenuLink" role="button" aria-haspopup="true" aria-expanded="false">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="/ES" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             S&P E-mini</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/ES">Dashboard</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/ES_returns">Returns</a>
+                                <a class="dropdown-item" href="/ES_price">Price</a>
+                                <a class="dropdown-item" href="/ES_ann_vol">Annual Volatility</a>
+                                <a class="dropdown-item" href="/ES_tr_1yr_vol">Trailing 1-Year Volatility</a>
+                                <a class="dropdown-item" href="/ES_largest_daily_return">Largest Daily Return</a>
+                                <a class="dropdown-item" href="/ES_largest_ann_return">Largest Annual Return</a>
+                            </div>
 
                         <!-- <a href="/ES" class="btn btn-secondary btn-lg" role="button" aria-pressed="true">S&P E-mini</a> -->
                         <!-- <button type="button" class="btn btn-secondary btn-lg" href="/ES">S&P E-mini</button> -->

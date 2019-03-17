@@ -40,9 +40,10 @@ def get_annualized_vol(contract_root):
 
 def get_trailing_1yr_vol(contract_root):
     contracts = get_contract_family(contract_root).replace(np.nan, 0)
-    return (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
+    # return (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
     tr_1yr_vol_cont = (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
-    tr_1yr_vol_cont.to_csv(contract_root + "_tr_1yr_vol")
+    tr_1yr_vol_cont.to_csv("%s_tr_1yr_vol.csv" % (contract_root))
+    return tr_1yr_vol_cont
 
 
 def get_largest_single_day_return(contract_root):
@@ -52,6 +53,11 @@ def get_largest_single_day_return(contract_root):
         'largest_daily_return': contracts.max()
     })
 
+
+def create_largest_daily_return_tables(contract_root):
+    df = get_largest_single_day_return(contract_root).fillna(method='ffill')
+    # pretty_plot(df, title=contract_root, ylabel='daily_return')
+    df.to_csv(contract_root + "_largest_daily_return.csv")
 
 # def create_largest_daily_return_table(contract_root):
 #     df = get_largest_single_day_return(
@@ -71,6 +77,12 @@ def get_largest_annual_return(contract_root):
         'date': contracts.rolling(252).sum().idxmax(),
         'largest_annual_return': contracts.rolling(252).sum().max()
     })
+
+
+def create_largest_ann_return_tables(contract_root):
+    df = get_largest_annual_return(contract_root).fillna(method='ffill')
+    # pretty_plot(df, title=contract_root, ylabel='daily_return')
+    df.to_csv(contract_root + "_largest_ann_return.csv")
 
 
 def pretty_plot(df, fields=[], figsize=(35, 10), title="Title", loc=2, hline=False, ylabel='Returns'):
@@ -125,7 +137,6 @@ def create_returns_tables(contract_root):
 #     df = get_annualized_vol(contract_root, field='contracts').fillna(method='ffill')
 #     df.to_sql(contract_root + "_ann_vol", localhost, if_exists='replace', chunksize=250)
 
-
 if __name__ == '__main__':
     print("ANNUALIZED_VOLS")
     print (get_annualized_vol('CME_ES'))
@@ -166,6 +177,18 @@ if __name__ == '__main__':
     create_returns_tables("CME_NQ")
     create_returns_tables("CME_NG")
     create_returns_tables("CME_GC")
+
+    create_largest_daily_return_tables("CME_CL")
+    create_largest_daily_return_tables("CME_ES")
+    create_largest_daily_return_tables("CME_NQ")
+    create_largest_daily_return_tables("CME_NG")
+    create_largest_daily_return_tables("CME_GC")
+
+    create_largest_ann_return_tables("CME_CL")
+    create_largest_ann_return_tables("CME_ES")
+    create_largest_ann_return_tables("CME_NQ")
+    create_largest_ann_return_tables("CME_NG")
+    create_largest_ann_return_tables("CME_GC")
 
     # create_ann_vol_tables("CME_CL")
     # get_annualized_vol("CME_ES")
