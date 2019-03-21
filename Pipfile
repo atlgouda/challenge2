@@ -17,8 +17,8 @@ gunicorn = "*"
 pymysql = "*"
 pypy = "*"
 mysql = "*"
+dash = "*"
 mysql-connector = "*"
-mysqlclient = "*"
 
 [requires]
 python_version = "3.7.2"
