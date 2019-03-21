@@ -49,15 +49,15 @@ def create_tables(contract_root):
 
 app.layout = html.Div(children=[
     html.H1('Price Graphs'),
-    dcc.Input(id='input', value='Enter Something', type='text'),
-    html.Div(id='output'),
+    # dcc.Input(id='input', value='Enter Something', type='text'),
+    # html.Div(id='output'),
     dcc.Dropdown(
+        id="dropdown_data",
         options=[
             {'label': 'Gold', 'value': 'gold_graph'},
             {'label': 'S&P 100 E-mini', 'value': 's_and_p_graph'},
         ],
         placeholder="Select a Contract",
-        id="dropdown_data"
     ),
     dcc.Graph(id='gold_graph',
               figure={
