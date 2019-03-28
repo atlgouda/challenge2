@@ -56,19 +56,7 @@ def get_largest_single_day_return(contract_root):
 
 def create_largest_daily_return_tables(contract_root):
     df = get_largest_single_day_return(contract_root).fillna(method='ffill')
-    # pretty_plot(df, title=contract_root, ylabel='daily_return')
     df.to_csv(contract_root + "_largest_daily_return.csv")
-
-# def create_largest_daily_return_table(contract_root):
-#     df = get_largest_single_day_return(
-#         contract_root)
-#     df.to_sql(contract_root + "_lg_daily_ret", localhost, if_exists='replace', chunksize=250)
-
-
-# def create_tables(contract_root):
-#     df = get_contract_family(contract_root, field='px_last').fillna(method='ffill')
-#     pretty_plot(df, title=contract_root, ylabel='px_last')
-#     df.to_sql(contract_root, localhost, if_exists='replace', chunksize=250)
 
 
 def get_largest_annual_return(contract_root):
@@ -81,7 +69,6 @@ def get_largest_annual_return(contract_root):
 
 def create_largest_ann_return_tables(contract_root):
     df = get_largest_annual_return(contract_root).fillna(method='ffill')
-    # pretty_plot(df, title=contract_root, ylabel='daily_return')
     df.to_csv(contract_root + "_largest_ann_return.csv")
 
 
@@ -123,19 +110,15 @@ def chart_contracts(contract_root):
 
 def create_tables(contract_root):
     df = get_contract_family(contract_root, field='px_last').fillna(method='ffill')
-    # pretty_plot(df, title=contract_root, ylabel='px_last')
     df.to_sql(contract_root, localhost, if_exists='replace', chunksize=250)
 
 
 def create_returns_tables(contract_root):
     df = get_contract_family(contract_root, field='daily_return').fillna(method='ffill')
-    # pretty_plot(df, title=contract_root, ylabel='daily_return')
-    df.to_sql(contract_root + " returns", localhost, if_exists='replace', chunksize=250)
+    df.to_sql(contract_root + "_ret", localhost, if_exists='replace', chunksize=250)
+    print (df.head())
+    df.cumsum().to_sql(contract_root + "_cumsum", localhost, if_exists='replace', chunksize=250)
 
-
-# def create_ann_vol_tables(contract_root):
-#     df = get_annualized_vol(contract_root, field='contracts').fillna(method='ffill')
-#     df.to_sql(contract_root + "_ann_vol", localhost, if_exists='replace', chunksize=250)
 
 if __name__ == '__main__':
     print("ANNUALIZED_VOLS")
@@ -189,7 +172,3 @@ if __name__ == '__main__':
     create_largest_ann_return_tables("CME_NQ")
     create_largest_ann_return_tables("CME_NG")
     create_largest_ann_return_tables("CME_GC")
-
-    # create_ann_vol_tables("CME_CL")
-    # get_annualized_vol("CME_ES")
-    # create_largest_daily_return_table("CME_ES")
