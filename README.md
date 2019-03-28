@@ -48,7 +48,7 @@ The problem with this method was that is that it will work locally, but not when
 There are some items I would like to address goin forward with my site:
 
 <ol>
-<li>  Most importantly, My dash module is not able to be brought into Flask.  I can currently view Flask on one port, and Dash on a different one.  Once I get this fixed, I can move forward with polishing the site</li>
+<li>  Most importantly, My dash module is not able to be brought into Flask.  I can currently view Flask on one port, and Dash on a different one.  Once I get this fixed, I can move forward with polishing the site.  Currently, my home page is blank, but I would like to add my Dash graph here.</li>
 <li>Find a way to use sql databases instead of CSVs.  I am not sure which way is the accepted method, but using JawsDB did not work.  This will not affect how the site looks, but would help with scaling out future additions</li>
 <li> Styling:  I used limited styling with creating my navbar, but would like to be able to devote some more time to the design of the site.  In its current state, the main focus is on functionality instead of user experience</li>
 <li>Cut out the first attempts.  I left in the embedded plotly graphs for now, but they will be unnecessary when I switch everything to the cleaner, more powerful Dash graphs</li>
