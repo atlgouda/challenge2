@@ -191,6 +191,8 @@ def update_image_src(selector):
 
 
 def show_graphs():
+    # import pdb
+    # pdb.set_trace()
     return (app.layout)
 
 
