@@ -2,11 +2,13 @@ from flask import Flask, render_template, make_response, Markup
 from flask_bootstrap import Bootstrap
 import dash
 import dash_html_components as html
+import no_callbacks
 import pricedash
 from werkzeug.wsgi import DispatcherMiddleware
 
 dash_app = dash.Dash(__name__)
 flask_app = Flask(__name__)
+bootstrap = Bootstrap(flask_app)
 
 application = DispatcherMiddleware(flask_app, {'/dashgraph': dash_app.server})
 # it seems like DispatcherMiddleware is being used to "bind routes from other servers onto the "flask_app"
@@ -21,12 +23,17 @@ def home():
 
 @flask_app.route("/dashgraph")
 def dashgraph():
-    return render_template('dash/dash.html', dash_chart=pricedash.show_graphs())
+    return render_template('dash/dash.html', dash_chart=no_callbacks.show_graphs())
 
 
-@flask_app.route("/chart/<futures_code>/")
+@flask_app.route("/dashboard/<futures_code>/")
 def chart_series(futures_code):
     return render_template(futures_code + str("/") + futures_code + str(".html"))
+
+
+@flask_app.route("/charts/<futures_code>/")
+def all_charts(futures_code):
+    return render_template(futures_code + str("/") + futures_code + str("_all_charts.html"))
 
 
 @flask_app.route("/price/<futures_code>/")

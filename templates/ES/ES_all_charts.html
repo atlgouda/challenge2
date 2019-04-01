@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block content %}
+        <h1 style="color:#f26e21; font-weight:bold">S&P E-mini Charts</h1>
+        <h2 style="color:#0065ad;">Price Graph</h2>
+        <iframe width=100% height="800" frameborder="0" scrolling="no" src="//plot.ly/~atlgouda/3.embed"></iframe>
+        <h2 style="color:#0065ad;">Returns Graph</h2>
+        <iframe width=100% height="800" frameborder="0" scrolling="no" src="//plot.ly/~atlgouda/5.embed"></iframe>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <iframe width="100%" height="500" frameborder="0" scrolling="no" src="//plot.ly/~atlgouda/8.embed"></iframe>
+                </div>
+                <div class="col">
+                    <iframe width="100%" height="500" frameborder="0" scrolling="no" src="//plot.ly/~atlgouda/10.embed"></iframe>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h5 style="text-align:center">Annualized Volatility Table</h5>
+                    <iframe width="100%" height="200" frameborder="0" scrolling="no" src="//plot.ly/~atlgouda/7.embed"></iframe>
+                </div>
+                <div class="col">
+                    <h5 style="text-align:center">Trailing 1-Year Volatility Table</h5>
+                    <iframe width="100%" height="200" frameborder="0" scrolling="no" src="//plot.ly/~atlgouda/9.embed"></iframe>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <iframe width="100%" height="500" frameborder="0" scrolling="no" src="//plot.ly/~atlgouda/12.embed"></iframe>
+                </div>
+                <div class="col">
+                    <iframe width="100%" height="500" frameborder="0" scrolling="no" src="//plot.ly/~atlgouda/14.embed"></iframe>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h5 style="text-align:center">Largest Daily Return Table</h5>
+                    <iframe width="100%" height="200" frameborder="0" scrolling="no" src="//plot.ly/~atlgouda/11.embed"></iframe>
+                </div>
+                <div class="col">
+                    <h5 style="text-align:center">Largest Annual Return Table</h5>
+                    <iframe width="100%" height="200" frameborder="0" scrolling="no" src="//plot.ly/~atlgouda/13.embed"></iframe>
+                </div>
+            </div>
+        </div>
+{% endblock content %}
