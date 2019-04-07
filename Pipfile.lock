@@ -354,12 +354,6 @@
             "index": "pypi",
             "version": "==0.24.2"
         },
-        "pandoc-min": {
-            "hashes": [
-                "sha256:981f2c83c283e4269306be202f5221deb1120d69570dc8661d79e1f342e39715"
-            ],
-            "version": "==1.0.9"
-        },
         "plotly": {
             "hashes": [
                 "sha256:3688585fbde025ebbc820c9c5bc9eaf8cc64f47f3071f62c686bc470bf8db7b9",
