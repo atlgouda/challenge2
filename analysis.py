@@ -75,24 +75,17 @@ def create_largest_ann_return_tables(contract_root):
 def pretty_plot(df, fields=[], figsize=(35, 10), title="Title", loc=2, hline=False, ylabel='Returns'):
     if not fields:
         fields = df.columns.values
-
     plt.figure(figsize=figsize, dpi=80)
-
     for cback in fields:
         plt.plot(df[cback], linewidth='0.7', label=cback)
-
     plt.xlabel('Date')
     plt.ylabel(ylabel)
-
     plt.title(title)
     plt.legend(loc=loc)
-
     if hline:
         plt.axhline(0, linewidth='1.5', color='black')
-
     plt.gca().grid(which='major', linestyle='-', linewidth='0.5', color='black')
     plt.gca().grid(which='minor', linestyle=':', linewidth='0.5', color='gray')
-
     plt.minorticks_on()
     plt.show()
 

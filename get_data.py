@@ -3,8 +3,6 @@ import pandas as pd
 import quandl.errors.quandl_error as quandl_error
 from sqlalchemy import create_engine
 
-print("Hello world")
-
 quandl.ApiConfig.api_key = 'Np-ijpp9HVJju6Kgtbia'
 
 localhost = create_engine('mysql://root:password@localhost/solution')

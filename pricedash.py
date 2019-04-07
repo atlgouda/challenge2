@@ -4,7 +4,6 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 from sqlalchemy import create_engine
-import pdb
 
 localhost = create_engine('mysql://root:password@localhost/solution')
 
@@ -191,8 +190,6 @@ def update_image_src(selector):
 
 
 def show_graphs():
-    # import pdb
-    # pdb.set_trace()
     return (app.layout)
 
 

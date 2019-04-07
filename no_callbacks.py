@@ -1,14 +1,8 @@
 import dash
-# from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 from sqlalchemy import create_engine
-# import pandas_datareader.data as web
-# import datetime
-
-# start = datetime.datetime(2005, 1, 1)
-# end = datetime.datetime.now()
 
 localhost = create_engine('mysql://root:password@localhost/solution')
 
@@ -39,17 +33,6 @@ def create_tables(contract_root):
 
 app.layout = html.Div(children=[
     html.H1('Price Graphs'),
-
-    # dcc.Dropdown(
-    #     id="dropdown_data",
-    #     options=[
-    #         {'label': 'GC1', 'value': 'GC1'},
-    #         {'label': 'GC2', 'value': 'GC2'},
-    #         {'label': 'GC3', 'value': 'GC3'},
-    #         {'label': 'GC4', 'value': 'GC4'},
-    #     ],
-    #     placeholder="Select a Contract",
-    # ),
     dcc.Graph(id='gold_graph',
               figure={
                   'data': [
@@ -81,9 +64,6 @@ app.layout = html.Div(children=[
 
 def show_graphs():
     return (app.layout)
-
-# def update_value(dropdown_data):
-#     return dcc.Graph(dropdown_data)
 
 
 if __name__ == '__main__':

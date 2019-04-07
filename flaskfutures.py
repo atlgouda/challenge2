@@ -1,9 +1,7 @@
-from flask import Flask, render_template, make_response, Markup
+from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 import dash
-import dash_html_components as html
 import no_callbacks
-import pricedash
 from werkzeug.wsgi import DispatcherMiddleware
 
 dash_app = dash.Dash(__name__)
