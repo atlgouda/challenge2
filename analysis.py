@@ -108,6 +108,21 @@ def chart(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'
     return plot(fig, output_type=output_type)
 
 
+def chart_ret(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'):
+    if not fields:
+        fields = df.columns
+    if not layout:
+        layout = _get_default_layout(title, dtick)
+
+    traces = []
+
+    for field in fields:
+        traces.append(go.Scattergl(x=df.index, y=df[field], mode='lines', name=field))
+
+    fig = go.Figure(data=traces, layout=layout)
+    return plot(fig, output_type=output_type)
+
+
 def _get_default_layout(title, dtick='M1'):
     return go.Layout(
         title=title,
@@ -125,21 +140,6 @@ def _get_default_layout(title, dtick='M1'):
     )
 
 
-def chart_returns_dynamic(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'):
-    if not fields:
-        fields = df.columns
-    if not layout:
-        layout = _get_default_layout(title, dtick)
-
-    traces = []
-
-    for field in fields:
-        traces.append(go.Scattergl(x=df.index, y=df[field], mode='lines', name=field))
-
-    fig = go.Figure(data=traces, layout=layout)
-    return plot(fig, output_type=output_type)
-
-
 def chart_contract(code_name):
     df = get_contract(code_name, field='px_last').fillna(method='ffill')
     pretty_plot(df, title=code_name, ylabel='px_last')
@@ -153,6 +153,12 @@ def chart_contracts(contract_root):
 
 def chart_contracts_dynamic(contract_root):
     df = get_contract_family('CME_{}'.format(contract_root), field='px_last').fillna(method='ffill')
+    return chart(df, output_type='div', title=contract_root)
+
+
+def chart_returns_dynamic(contract_root):
+    df = get_contract_family('CME_{}'.format(contract_root),
+                             field='daily_return').fillna(method='ffill')
     return chart(df, output_type='div', title=contract_root)
 
 
