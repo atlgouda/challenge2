@@ -6,6 +6,9 @@ from sqlalchemy import create_engine
 import math
 import matplotlib  # noqa
 matplotlib.use('PS')  # noqa
+from plotly.offline import plot
+import plotly.figure_factory as ff
+import plotly.graph_objs as go
 
 localhost = create_engine('mysql://root:password@localhost/solution')
 
@@ -90,6 +93,53 @@ def pretty_plot(df, fields=[], figsize=(35, 10), title="Title", loc=2, hline=Fal
     plt.show()
 
 
+def chart(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'):
+    if not fields:
+        fields = df.columns
+    if not layout:
+        layout = _get_default_layout(title, dtick)
+
+    traces = []
+
+    for field in fields:
+        traces.append(go.Scattergl(x=df.index, y=df[field], mode='lines', name=field))
+
+    fig = go.Figure(data=traces, layout=layout)
+    return plot(fig, output_type=output_type)
+
+
+def _get_default_layout(title, dtick='M1'):
+    return go.Layout(
+        title=title,
+        font=dict(family='Saira', size=16, color='#7f7f7f'),
+        xaxis={
+            'type': 'date',
+            'dtick': 'M36',
+            'tickformat': '%m/%y',
+            'hoverformat': '%m/%d/%y',
+            'zerolinecolor': 'black',
+            'showticklabels': True,
+            'zeroline': True,
+            'showgrid': True
+        },
+    )
+
+
+def chart_returns_dynamic(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'):
+    if not fields:
+        fields = df.columns
+    if not layout:
+        layout = _get_default_layout(title, dtick)
+
+    traces = []
+
+    for field in fields:
+        traces.append(go.Scattergl(x=df.index, y=df[field], mode='lines', name=field))
+
+    fig = go.Figure(data=traces, layout=layout)
+    return plot(fig, output_type=output_type)
+
+
 def chart_contract(code_name):
     df = get_contract(code_name, field='px_last').fillna(method='ffill')
     pretty_plot(df, title=code_name, ylabel='px_last')
@@ -99,6 +149,11 @@ def chart_contracts(contract_root):
     df = get_contract_family(contract_root, field='px_last').fillna(method='ffill')
     pretty_plot(df, title=contract_root, ylabel='px_last')
     print(df.head())
+
+
+def chart_contracts_dynamic(contract_root):
+    df = get_contract_family('CME_{}'.format(contract_root), field='px_last').fillna(method='ffill')
+    return chart(df, output_type='div', title=contract_root)
 
 
 def create_tables(contract_root):

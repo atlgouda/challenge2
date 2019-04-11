@@ -1,8 +1,10 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, Markup
 from flask_bootstrap import Bootstrap
 import dash
 import no_callbacks
+# from analysis import chart_contracts
 from werkzeug.wsgi import DispatcherMiddleware
+from analysis import chart_contracts_dynamic
 
 dash_app = dash.Dash(__name__)
 flask_app = Flask(__name__)
@@ -26,7 +28,12 @@ def dashgraph():
 
 @flask_app.route("/dashboard/<futures_code>/")
 def chart_series(futures_code):
-    return render_template(futures_code + str("/") + futures_code + str(".html"))
+    return render_template('charts_base.html', contract_family=futures_code, chart=Markup(chart_contracts_dynamic(futures_code)))
+
+# @flask_app.route("/dashboard/<futures_code>/")
+# def chart_series(futures_code):
+#     return render_template('charts_base.html', contract_family=futures_code, returns_chart=chart_contracts(futures_code))
+#     return render_template(futures_code + str("/") + futures_code + str(".html"))
 
 
 @flask_app.route("/charts/<futures_code>/")

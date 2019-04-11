@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+<!-- <img src="https://i.imgur.com/0ZoWMHy.png" class="pagelogo"> -->
+<h1 class="pageh1">{{ contract_family }} Charts</h1>
+<h2 class="pageh2">Price Graph</h2>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            {{ chart }}
+        </div>
+    </div>
+</div>
+<h2 class="pageh2">Returns Graph</h2>
+
+{% endblock content %}
