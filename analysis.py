@@ -159,7 +159,7 @@ def chart_contracts_dynamic(contract_root):
 def chart_returns_dynamic(contract_root):
     df = get_contract_family('CME_{}'.format(contract_root),
                              field='daily_return').fillna(method='ffill')
-    return chart(df, output_type='div', title=contract_root)
+    return chart(df.cumsum(), output_type='div', title=contract_root)
 
 
 def create_tables(contract_root):
