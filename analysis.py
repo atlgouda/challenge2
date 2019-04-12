@@ -30,6 +30,14 @@ def get_contract_family_daily(contract_root, field='daily_return'):
     return raw_df.pivot(columns='code_name', values=field)
 
 
+def get_contract_family_tr_1yr(contract_root, field='trailing_1_yr_vol'):
+    contracts = '({})'.format(
+        ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
+    raw_df = pd.read_sql("select code_name, {} from combined_tr_1yr where code_name in {}".format(
+        field, contracts), localhost, parse_dates=True)
+    return raw_df.pivot(columns='code_name', values=field)
+
+
 def get_contract_family_returns(contract_root):
     # When working with financial data, we handle 'missing values' depending on the type of data we are working with.
     # A rule of thumb is, when dealing with % returns, we replace missing data with 0
@@ -206,6 +214,12 @@ def chart_returns_dynamic(contract_root):
 def chart_daily_return_dynamic(contract_root):
     df = get_contract_family_daily('CME_{}'.format(contract_root),
                                    field='largest_daily_return').fillna(method='ffill')
+    return chart2(df, output_type='div', title=contract_root)
+
+
+def chart_tr_1yr_dynamic(contract_root):
+    df = get_contract_family_tr_1yr('CME_{}'.format(contract_root),
+                                    field='trailing_1_yr_vol').fillna(method='ffill')
     return chart2(df, output_type='div', title=contract_root)
 
 
