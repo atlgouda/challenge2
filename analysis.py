@@ -63,7 +63,7 @@ def get_trailing_1yr_vol(contract_root):
     # return (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
     tr_1yr_vol_cont = (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
     tr_1yr_sql = pd.DataFrame({
-        'trailing_1_yr_vol': contracts.max()
+        'trailing_1_yr_vol': tr_1yr_vol_cont
     })
     tr_1yr_sql.to_sql(contract_root + "_tr_1_yr_sql",
                       localhost, if_exists='replace', chunksize=250, index=True,
@@ -149,7 +149,22 @@ def chart2(df, fields=None, title=None, layout=None, output_type=None, dtick='M1
     traces = []
 
     for field in fields:
-        traces.append(go.Scattergl(x=df.index, y=df[field], mode='markers', name=field))
+        traces.append(go.Bar(x=df[field], y=df[field], name=field))
+
+    fig = go.Figure(data=traces, layout=layout)
+    return plot(fig, output_type=output_type)
+
+
+def chart3(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'):
+    if not fields:
+        fields = df.columns
+    if not layout:
+        layout = _get_default_layout2(title, dtick)
+
+    traces = []
+
+    for field in fields:
+        traces.append(go.Bar(x=df[field], y=df[field], name=field))
 
     fig = go.Figure(data=traces, layout=layout)
     return plot(fig, output_type=output_type)
@@ -179,6 +194,9 @@ def _get_default_layout2(title, dtick='dtick'):
         xaxis={
             'type': 'category',
             'dtick': 'dtick',
+            'tickmode': 'array',
+            'tickvals': [0, 1, 2, 3],
+            'ticktext': [title + '1', title + '2', title + '3', title + '4'],
             # 'tickformat': '%m/%y',
             # 'hoverformat': '%m/%d/%y',
             'zerolinecolor': 'black',
@@ -220,7 +238,7 @@ def chart_daily_return_dynamic(contract_root):
 def chart_tr_1yr_dynamic(contract_root):
     df = get_contract_family_tr_1yr('CME_{}'.format(contract_root),
                                     field='trailing_1_yr_vol').fillna(method='ffill')
-    return chart2(df, output_type='div', title=contract_root)
+    return chart3(df, output_type='div', title=contract_root)
 
 
 def create_tables(contract_root):
