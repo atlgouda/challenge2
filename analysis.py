@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib  # noqa
 from sqlalchemy import create_engine
+from sqlalchemy.types import VARCHAR
 import math
 import matplotlib  # noqa
 matplotlib.use('PS')  # noqa
@@ -18,6 +19,14 @@ def get_contract_family(contract_root, field='daily_return'):
         ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
     raw_df = pd.read_sql("select datadate, code_name, {} from futures where code_name in {}".format(
         field, contracts), localhost, parse_dates=True, index_col='datadate')
+    return raw_df.pivot(columns='code_name', values=field)
+
+
+def get_contract_family_daily(contract_root, field='daily_return'):
+    contracts = '({})'.format(
+        ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
+    raw_df = pd.read_sql("select code_name, date, {} from combined_largest_daily_return where code_name in {}".format(
+        field, contracts), localhost, parse_dates=True, index_col='date')
     return raw_df.pivot(columns='code_name', values=field)
 
 
@@ -45,8 +54,15 @@ def get_trailing_1yr_vol(contract_root):
     contracts = get_contract_family(contract_root).replace(np.nan, 0)
     # return (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
     tr_1yr_vol_cont = (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
-    tr_1yr_vol_cont.to_csv("%s_tr_1yr_vol.csv" % (contract_root))
-    return tr_1yr_vol_cont
+    tr_1yr_sql = pd.DataFrame({
+        'trailing_1_yr_vol': contracts.max()
+    })
+    tr_1yr_sql.to_sql(contract_root + "_tr_1_yr_sql",
+                      localhost, if_exists='replace', chunksize=250, index=True,
+                      dtype={'code_name': VARCHAR(tr_1yr_sql.index.get_level_values('code_name').str.len().max())})
+    tr_1yr_sql.to_sql("combined_tr_1yr",
+                      localhost, if_exists='append', chunksize=250, index=True,
+                      dtype={'code_name': VARCHAR(tr_1yr_sql.index.get_level_values('code_name').str.len().max())})
 
 
 def get_largest_single_day_return(contract_root):
@@ -58,8 +74,16 @@ def get_largest_single_day_return(contract_root):
 
 
 def create_largest_daily_return_tables(contract_root):
-    df = get_largest_single_day_return(contract_root).fillna(method='ffill')
-    df.to_csv(contract_root + "_largest_daily_return.csv")
+    df = get_largest_single_day_return(
+        contract_root).fillna(method='ffill')
+    # print(df.loc())
+    # print(df.head())
+    df.to_sql(contract_root + "_largest_daily_return",
+              localhost, if_exists='replace', chunksize=250, index=True,
+              dtype={'code_name': VARCHAR(df.index.get_level_values('code_name').str.len().max())})
+    df.to_sql("combined_largest_daily_return",
+              localhost, if_exists='append', chunksize=250, index=True,
+              dtype={'code_name': VARCHAR(df.index.get_level_values('code_name').str.len().max())})
 
 
 def get_largest_annual_return(contract_root):
@@ -108,16 +132,16 @@ def chart(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'
     return plot(fig, output_type=output_type)
 
 
-def chart_ret(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'):
+def chart2(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'):
     if not fields:
         fields = df.columns
     if not layout:
-        layout = _get_default_layout(title, dtick)
+        layout = _get_default_layout2(title, dtick)
 
     traces = []
 
     for field in fields:
-        traces.append(go.Scattergl(x=df.index, y=df[field], mode='lines', name=field))
+        traces.append(go.Scattergl(x=df.index, y=df[field], mode='markers', name=field))
 
     fig = go.Figure(data=traces, layout=layout)
     return plot(fig, output_type=output_type)
@@ -131,7 +155,24 @@ def _get_default_layout(title, dtick='M1'):
             'type': 'date',
             'dtick': 'M36',
             'tickformat': '%m/%y',
-            'hoverformat': '%m/%d/%y',
+            'hoverformat': '%m/d/%y',
+            'zerolinecolor': 'black',
+            'showticklabels': True,
+            'zeroline': True,
+            'showgrid': True
+        },
+    )
+
+
+def _get_default_layout2(title, dtick='dtick'):
+    return go.Layout(
+        title=title,
+        font=dict(family='Saira', size=16, color='#7f7f7f'),
+        xaxis={
+            'type': 'category',
+            'dtick': 'dtick',
+            # 'tickformat': '%m/%y',
+            # 'hoverformat': '%m/%d/%y',
             'zerolinecolor': 'black',
             'showticklabels': True,
             'zeroline': True,
@@ -160,6 +201,12 @@ def chart_returns_dynamic(contract_root):
     df = get_contract_family('CME_{}'.format(contract_root),
                              field='daily_return').fillna(method='ffill')
     return chart(df.cumsum(), output_type='div', title=contract_root)
+
+
+def chart_daily_return_dynamic(contract_root):
+    df = get_contract_family_daily('CME_{}'.format(contract_root),
+                                   field='largest_daily_return').fillna(method='ffill')
+    return chart2(df, output_type='div', title=contract_root)
 
 
 def create_tables(contract_root):
