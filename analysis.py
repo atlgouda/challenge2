@@ -60,7 +60,6 @@ def get_annualized_vol(contract_root):
 
 def get_trailing_1yr_vol(contract_root):
     contracts = get_contract_family(contract_root).replace(np.nan, 0)
-    # return (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
     tr_1yr_vol_cont = (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
     tr_1yr_sql = pd.DataFrame({
         'trailing_1_yr_vol': tr_1yr_vol_cont
@@ -71,6 +70,7 @@ def get_trailing_1yr_vol(contract_root):
     tr_1yr_sql.to_sql("combined_tr_1yr",
                       localhost, if_exists='append', chunksize=250, index=True,
                       dtype={'code_name': VARCHAR(tr_1yr_sql.index.get_level_values('code_name').str.len().max())})
+    return (contracts.rolling(252).std() * math.sqrt(252)).iloc[-1]
 
 
 def get_largest_single_day_return(contract_root):
@@ -178,7 +178,7 @@ def _get_default_layout(title, dtick='M1'):
             'type': 'date',
             'dtick': 'M36',
             'tickformat': '%m/%y',
-            'hoverformat': '%m/d/%y',
+            'hoverformat': '%m/%d/%y',
             'zerolinecolor': 'black',
             'showticklabels': True,
             'zeroline': True,
