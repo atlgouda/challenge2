@@ -22,7 +22,7 @@ def get_contract_family(contract_root, field='daily_return'):
 def get_contract_family_daily(contract_root, field='daily_return'):
     contracts = '({})'.format(
         ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
-    raw_df = pd.read_sql("select code_name, date, {} from combined_largest_daily_return where code_name in {}".format(
+    raw_df = pd.read_sql("select date, code_name, {} from combined_largest_daily_return where code_name in {}".format(
         field, contracts), localhost, parse_dates=True, index_col='date')
     return raw_df.pivot(columns='code_name', values=field)
 
@@ -49,14 +49,6 @@ def get_contract_family_ann_vol(contract_root, field='ann_vol'):
     raw_df = pd.read_sql("select code_name, {} from combined_ann_vol where code_name in {}".format(
         field, contracts), localhost, parse_dates=True)
     return raw_df.pivot(columns='code_name', values=field)
-
-
-def get_contract_family_returns(contract_root):
-    return get_contract_family(contract_root, field='daily_return').replace(np.nan, 0)
-
-
-def get_contract_family_prices(contract_root):
-    return get_contract_family(contract_root, field='px_last').fillna(method='ffill')
 
 
 def get_contract(contract_code, field='daily_return'):
@@ -111,24 +103,6 @@ def create_largest_annual_return_tables(contract_root):
     df.to_sql("combined_largest_annual_return",
               localhost, if_exists='append', chunksize=250, index=True,
               dtype={'code_name': VARCHAR(df.index.get_level_values('code_name').str.len().max())})
-
-
-def pretty_plot(df, fields=[], figsize=(35, 10), title="Title", loc=2, hline=False, ylabel='Returns'):
-    if not fields:
-        fields = df.columns.values
-    plt.figure(figsize=figsize, dpi=80)
-    for cback in fields:
-        plt.plot(df[cback], linewidth='0.7', label=cback)
-    plt.xlabel('Date')
-    plt.ylabel(ylabel)
-    plt.title(title)
-    plt.legend(loc=loc)
-    if hline:
-        plt.axhline(0, linewidth='1.5', color='black')
-    plt.gca().grid(which='major', linestyle='-', linewidth='0.5', color='black')
-    plt.gca().grid(which='minor', linestyle=':', linewidth='0.5', color='gray')
-    plt.minorticks_on()
-    plt.show()
 
 
 def chart(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'):
@@ -193,13 +167,13 @@ def _get_default_layout(title, dtick='M1'):
     )
 
 
-def _get_default_layout2(title, dtick='dtick'):
+def _get_default_layout2(title, date):
     return go.Layout(
         title=title,
         font=dict(family='Saira', size=16, color='#7f7f7f'),
         xaxis={
             'type': 'category',
-            'dtick': 'dtick',
+            'dtick': 'date',
             'tickmode': 'array',
             'tickvals': [0, 1, 2, 3],
             'ticktext': [title + '1', title + '2', title + '3', title + '4'],
