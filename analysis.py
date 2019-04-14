@@ -5,8 +5,6 @@ import matplotlib  # noqa
 from sqlalchemy import create_engine
 from sqlalchemy.types import VARCHAR
 import math
-import matplotlib  # noqa
-matplotlib.use('PS')  # noqa
 from plotly.offline import plot
 import plotly.graph_objs as go
 
