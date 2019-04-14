@@ -259,17 +259,6 @@ def chart_ann_vol_dynamic(contract_root):
     return chart3(df, output_type='div', title=contract_root)
 
 
-def create_tables(contract_root):
-    df = get_contract_family(contract_root, field='px_last').fillna(method='ffill')
-    df.to_sql(contract_root, localhost, if_exists='replace', chunksize=250)
-
-
-def create_returns_tables(contract_root):
-    df = get_contract_family(contract_root, field='daily_return').fillna(method='ffill')
-    df.to_sql(contract_root + "_ret", localhost, if_exists='replace', chunksize=250)
-    df.cumsum().to_sql(contract_root + "_cumsum", localhost, if_exists='replace', chunksize=250)
-
-
 if __name__ == '__main__':
     print("ANNUALIZED_VOLS")
     print (get_annualized_vol('CME_ES'))
@@ -298,18 +287,6 @@ if __name__ == '__main__':
     print (get_largest_annual_return('CME_CL'))
     print (get_largest_annual_return('CME_NG'))
     print (get_largest_annual_return('CME_GC'))
-
-    create_tables("CME_CL")
-    create_tables("CME_ES")
-    create_tables("CME_NQ")
-    create_tables("CME_NG")
-    create_tables("CME_GC")
-
-    create_returns_tables("CME_CL")
-    create_returns_tables("CME_ES")
-    create_returns_tables("CME_NQ")
-    create_returns_tables("CME_NG")
-    create_returns_tables("CME_GC")
 
     create_largest_daily_return_tables("CME_CL")
     create_largest_daily_return_tables("CME_ES")
