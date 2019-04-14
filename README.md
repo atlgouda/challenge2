@@ -1,6 +1,6 @@
 # Graphing with Flask and Plotly
 
-##To Begin
+## To Begin
 Run "python get_data.py", then "python analysis.py"
 
 This will set up the SQL tables needed.

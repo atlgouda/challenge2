@@ -17,7 +17,6 @@ gunicorn = "*"
 pymysql = "*"
 pypy = "*"
 mysql = "*"
-dash = "*"
 mysql-connector = "*"
 
 [requires]
