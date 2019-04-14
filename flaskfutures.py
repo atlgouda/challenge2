@@ -40,7 +40,7 @@ def chart_returns(futures_code):
 @flask_app.route("/ann_vol/<futures_code>/")
 def chart_ann_vol(futures_code):
     return render_template('ann_vol.html', contract_family=futures_code,
-                           chart_daily_ret=Markup(chart_daily_return_dynamic(futures_code)),
+                           chart_ann_vol=Markup(chart_daily_return_dynamic(futures_code)),
                            )
 
 
