@@ -213,17 +213,6 @@ def _get_default_layout2(title, dtick='dtick'):
     )
 
 
-def chart_contract(code_name):
-    df = get_contract(code_name, field='px_last').fillna(method='ffill')
-    pretty_plot(df, title=code_name, ylabel='px_last')
-
-
-def chart_contracts(contract_root):
-    df = get_contract_family(contract_root, field='px_last').fillna(method='ffill')
-    pretty_plot(df, title=contract_root, ylabel='px_last')
-    print(df.head())
-
-
 def chart_contracts_dynamic(contract_root):
     df = get_contract_family('CME_{}'.format(contract_root), field='px_last').fillna(method='ffill')
     return chart(df, output_type='div', title=contract_root)
