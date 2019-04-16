@@ -129,7 +129,7 @@ def chart2(df, fields=None, title=None, layout=None, output_type=None, dtick='M1
     traces = []
 
     for field in fields:
-        traces.append(go.Bar(x=df[field], y=df[field], name=field))
+        traces.append(go.Bar(x=df.index, y=df[field], name=field))
 
     fig = go.Figure(data=traces, layout=layout)
     return plot(fig, output_type=output_type)
@@ -139,7 +139,7 @@ def chart3(df, fields=None, title=None, layout=None, output_type=None, dtick='M1
     if not fields:
         fields = df.columns
     if not layout:
-        layout = _get_default_layout2(title, dtick)
+        layout = _get_default_layout3(title, dtick)
 
     traces = []
 
@@ -167,13 +167,34 @@ def _get_default_layout(title, dtick='M1'):
     )
 
 
-def _get_default_layout2(title, date):
+def _get_default_layout2(title, dtick='M36'):
+    return go.Layout(
+        title=title,
+        font=dict(family='Saira', size=16, color='#7f7f7f'),
+        xaxis={
+            'type': 'date',
+            'dtick': 'M36',
+            'tickmode': 'array',
+            # 'tickvals': [0, 1, 2, 3],
+            # 'ticktext': [title + '1', title + '2', title + '3', title + '4'],
+            # 'tickformat': '%m/%y',
+            # 'hoverformat': '%m/%d/%y',
+            'hoverformat': 'dtick',
+            'zerolinecolor': 'black',
+            'showticklabels': True,
+            'zeroline': True,
+            'showgrid': True
+        },
+    )
+
+
+def _get_default_layout3(title, dtick='dtick'):
     return go.Layout(
         title=title,
         font=dict(family='Saira', size=16, color='#7f7f7f'),
         xaxis={
             'type': 'category',
-            'dtick': 'date',
+            'dtick': 'dtick',
             'tickmode': 'array',
             'tickvals': [0, 1, 2, 3],
             'ticktext': [title + '1', title + '2', title + '3', title + '4'],
@@ -201,13 +222,13 @@ def chart_returns_dynamic(contract_root):
 def chart_daily_return_dynamic(contract_root):
     df = get_contract_family_daily('CME_{}'.format(contract_root),
                                    field='largest_daily_return').fillna(method='ffill')
-    return chart2(df, output_type='div', title=contract_root)
+    return chart3(df, output_type='div', title=contract_root)
 
 
 def chart_annual_return_dynamic(contract_root):
     df = get_contract_family_annual('CME_{}'.format(contract_root),
                                     field='largest_annual_return').fillna(method='ffill')
-    return chart2(df, output_type='div', title=contract_root)
+    return chart3(df, output_type='div', title=contract_root)
 
 
 def chart_tr_1yr_dynamic(contract_root):
@@ -220,6 +241,18 @@ def chart_ann_vol_dynamic(contract_root):
     df = get_contract_family_ann_vol('CME_{}'.format(contract_root),
                                      field='ann_vol').fillna(method='ffill')
     return chart3(df, output_type='div', title=contract_root)
+
+
+def chart_dated_daily_return_dynamic(contract_root):
+    df = get_contract_family_daily('CME_{}'.format(contract_root),
+                                   field='largest_daily_return').fillna(method='ffill')
+    return chart2(df, output_type='div', title=contract_root)
+
+
+def chart_dated_annual_return_dynamic(contract_root):
+    df = get_contract_family_annual('CME_{}'.format(contract_root),
+                                    field='largest_annual_return').fillna(method='ffill')
+    return chart2(df, output_type='div', title=contract_root)
 
 
 if __name__ == '__main__':

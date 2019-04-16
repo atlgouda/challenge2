@@ -2,6 +2,7 @@ import quandl
 import pandas as pd
 import quandl.errors.quandl_error as quandl_error
 from sqlalchemy import create_engine
+import math
 
 quandl.ApiConfig.api_key = 'Np-ijpp9HVJju6Kgtbia'
 
@@ -18,8 +19,17 @@ def pull_data(code_name, start='2005-01-01'):
 
     res['daily_return'] = res['Settle'] / res['Settle'].shift(1) - 1.
     res['code_name'] = code_name
+    res['ann_vol'] = res['daily_return'].std() * math.sqrt(252)
+    res['tr_1yr'] = (res['daily_return'].rolling(252).std() * math.sqrt(252)).iloc[-1]
+    res['largest_daily_return'] = res['daily_return'].max()
+    res['largest_daily_return_date'] = res['daily_return'].idxmax()
+    res['largest_annual_return'] = res['daily_return'].rolling(252).sum().max()
+    res['largest_annual_return_date'] = res['daily_return'].rolling(252).sum().idxmax()
 
-    to_save = res[['code_name', 'Settle', 'daily_return']].rename(columns={'Settle': 'px_last'})
+    to_save = res[['code_name', 'Settle', 'daily_return', 'ann_vol', 'tr_1yr',
+                   'largest_daily_return', 'largest_daily_return_date',
+                   'largest_annual_return', 'largest_annual_return_date']].rename(columns={
+                       'Settle': 'px_last'})
     to_save.index.name = 'datadate'
 
     return to_save
@@ -32,6 +42,8 @@ def run():
             dfs.append(pull_data('{}{}'.format(code_root, contract_number)))
     full_df = pd.concat(dfs)
     full_df.to_sql('futures', localhost, if_exists='replace', chunksize=250)
+    ann_vol_df = (full_df.std() * math.sqrt(252))
+    print(ann_vol_df)
 
 
 if __name__ == '__main__':
