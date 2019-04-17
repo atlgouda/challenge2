@@ -219,27 +219,31 @@ def chart_returns_dynamic(contract_root):
     return chart(df.cumsum(), output_type='div', title=contract_root)
 
 
-def chart_daily_return_dynamic(contract_root):
-    df = get_contract_family_daily('CME_{}'.format(contract_root),
-                                   field='largest_daily_return').fillna(method='ffill')
-    return chart3(df, output_type='div', title=contract_root)
-
-
-def chart_annual_return_dynamic(contract_root):
-    df = get_contract_family_annual('CME_{}'.format(contract_root),
-                                    field='largest_annual_return').fillna(method='ffill')
+def chart_ann_vol_dynamic(contract_root):
+    df = get_contract_family('CME_{}'.format(contract_root),
+                             field='ann_vol').fillna(method='ffill')
     return chart3(df, output_type='div', title=contract_root)
 
 
 def chart_tr_1yr_dynamic(contract_root):
-    df = get_contract_family_tr_1yr('CME_{}'.format(contract_root),
-                                    field='trailing_1_yr_vol').fillna(method='ffill')
+    df = get_contract_family('CME_{}'.format(contract_root),
+                             field='tr_1yr').fillna(method='ffill')
     return chart3(df, output_type='div', title=contract_root)
 
 
-def chart_ann_vol_dynamic(contract_root):
-    df = get_contract_family_ann_vol('CME_{}'.format(contract_root),
-                                     field='ann_vol').fillna(method='ffill')
+def chart_daily_return_dynamic(contract_root):
+    df = get_contract_family('CME_{}'.format(contract_root),
+                             field='largest_daily_return',
+                             ).fillna(method='ffill')
+    # df2 = get_contract_family('CME_{}'.format(contract_root),
+    #                           field='largest_daily_return_date',
+    #                           ).fillna(method='ffill')
+    return chart3(df, output_type='div', title=contract_root)
+
+
+def chart_annual_return_dynamic(contract_root):
+    df = get_contract_family('CME_{}'.format(contract_root),
+                             field=('largest_annual_return')).fillna(method='ffill')
     return chart3(df, output_type='div', title=contract_root)
 
 

@@ -35,13 +35,13 @@ def chart_price(futures_code):
 @flask_app.route("/returns/<futures_code>/")
 def chart_returns(futures_code):
     return render_template('returns.html', contract_family=futures_code,
-                           chart_ret=Markup(chart_contracts_dynamic(futures_code)))
+                           chart_ret=Markup(chart_returns_dynamic(futures_code)))
 
 
 @flask_app.route("/ann_vol/<futures_code>/")
 def chart_ann_vol(futures_code):
     return render_template('ann_vol.html', contract_family=futures_code,
-                           chart_ann_vol=Markup(chart_daily_return_dynamic(futures_code)),
+                           chart_ann_vol=Markup(chart_ann_vol_dynamic(futures_code)),
                            )
 
 
@@ -78,4 +78,3 @@ def chart_dated_largest_returns(futures_code):
 
 if __name__ == '__main__':
     flask_app.run(debug=True)
-    dash_app.run(debug=True)

@@ -42,8 +42,6 @@ def run():
             dfs.append(pull_data('{}{}'.format(code_root, contract_number)))
     full_df = pd.concat(dfs)
     full_df.to_sql('futures', localhost, if_exists='replace', chunksize=250)
-    ann_vol_df = (full_df.std() * math.sqrt(252))
-    print(ann_vol_df)
 
 
 if __name__ == '__main__':
