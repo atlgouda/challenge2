@@ -3,23 +3,11 @@ import matplotlib  # noqa
 from sqlalchemy import create_engine
 from plotly.offline import plot
 import plotly.graph_objs as go
-from get_data import stored_df
 
 localhost = create_engine('mysql://root:password@localhost/solution')
 
 
 def get_contract_family(contract_root, field='daily_return'):
-    contracts = '({})'.format(
-        ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
-    raw_df = pd.read_sql("select datadate, code_name, {} from futures where code_name in {}".format(
-        field, contracts), localhost, parse_dates=True, index_col='datadate')
-    return raw_df.pivot(columns='code_name', values=field)
-
-
-# print(get_contract_family('CL')
-
-
-def get_dated_contract_family(contract_root, field='daily_return'):
     contracts = '({})'.format(
         ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
     raw_df = pd.read_sql("select datadate, code_name, {} from futures where code_name in {}".format(
@@ -47,22 +35,7 @@ def chart2(df, fields=None, title=None, layout=None, output_type=None, dtick='M1
         fields = df.columns
         # xfields = df2.columns
     if not layout:
-        layout = _get_default_layout3(title, dtick)
-
-    traces = []
-
-    for field in fields:
-        traces.append(go.Bar(x=df[field], y=df[field], name=field))
-
-    fig = go.Figure(data=traces, layout=layout)
-    return plot(fig, output_type=output_type)
-
-
-def chart3(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'):
-    if not fields:
-        fields = df.columns
-    if not layout:
-        layout = _get_default_layout3(title, dtick)
+        layout = _get_default_layout2(title, dtick)
 
     traces = []
 
@@ -100,28 +73,6 @@ def _get_default_layout2(title, dtick='dtick'):
             'tickmode': 'array',
             'tickvals': [0, 1, 2, 3],
             'ticktext': [title + '1', title + '2', title + '3', title + '4'],
-            # 'tickformat': '%m/%y',
-            # 'hoverformat': '%m/%d/%y',
-            'zerolinecolor': 'black',
-            'showticklabels': True,
-            'zeroline': True,
-            'showgrid': True
-        },
-    )
-
-
-def _get_default_layout3(title, dtick='dtick'):
-    return go.Layout(
-        title=title,
-        font=dict(family='Saira', size=16, color='#7f7f7f'),
-        xaxis={
-            'type': 'category',
-            'dtick': 'dtick',
-            'tickmode': 'array',
-            'tickvals': [0, 1, 2, 3],
-            'ticktext': [title + '1', title + '2', title + '3', title + '4'],
-            # 'tickformat': '%m/%y',
-            # 'hoverformat': '%m/%d/%y',
             'zerolinecolor': 'black',
             'showticklabels': True,
             'zeroline': True,
@@ -144,23 +95,23 @@ def chart_returns_dynamic(contract_root):
 def chart_ann_vol_dynamic(contract_root):
     df = get_contract_family('CME_{}'.format(contract_root),
                              field='ann_vol').fillna(method='ffill')
-    return chart3(df, output_type='div', title=contract_root)
+    return chart2(df, output_type='div', title=contract_root)
 
 
 def chart_tr_1yr_dynamic(contract_root):
     df = get_contract_family('CME_{}'.format(contract_root),
                              field='tr_1yr').fillna(method='ffill')
-    return chart3(df, output_type='div', title=contract_root)
+    return chart2(df, output_type='div', title=contract_root)
 
 
 def chart_daily_return_dynamic(contract_root):
-    df = get_dated_contract_family('CME_{}'.format(contract_root),
-                                   field='largest_daily_return',
-                                   ).fillna(method='ffill')
+    df = get_contract_family('CME_{}'.format(contract_root),
+                             field='largest_daily_return',
+                             ).fillna(method='ffill')
     return chart2(df, output_type='div', title=contract_root)
 
 
 def chart_annual_return_dynamic(contract_root):
     df = get_contract_family('CME_{}'.format(contract_root),
                              field=('largest_annual_return')).fillna(method='ffill')
-    return chart3(df, output_type='div', title=contract_root)
+    return chart2(df, output_type='div', title=contract_root)

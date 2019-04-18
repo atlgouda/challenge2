@@ -41,14 +41,9 @@ def run():
         for contract_number in range(1, 5):
             dfs.append(pull_data('{}{}'.format(code_root, contract_number)))
     full_df = pd.concat(dfs)
-    # full_df.to_sql('futures', localhost, if_exists='replace', chunksize=250)
+    full_df.to_sql('futures', localhost, if_exists='replace', chunksize=250)
     return full_df
 
 
-#
-#
-stored_df = run()
-
-
-# if __name__ == '__main__':
-#     run()
+if __name__ == '__main__':
+    run()
