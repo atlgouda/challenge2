@@ -2,6 +2,7 @@ from flask import Flask, render_template, Markup
 from flask_bootstrap import Bootstrap
 from analysis import chart_contracts_dynamic, chart_returns_dynamic, chart_daily_return_dynamic
 from analysis import chart_tr_1yr_dynamic, chart_ann_vol_dynamic, chart_annual_return_dynamic
+from analysis import table_ann_vol_dynamic
 flask_app = Flask(__name__)
 bootstrap = Bootstrap(flask_app)
 
@@ -21,6 +22,7 @@ def chart_series(futures_code):
                            chart_daily_ret=Markup(chart_daily_return_dynamic(futures_code)),
                            chart_tr_1yr=Markup(chart_tr_1yr_dynamic(futures_code)),
                            chart_ann_vol=Markup(chart_ann_vol_dynamic(futures_code)),
+                           table_ann_vol=Markup(table_ann_vol_dynamic(futures_code)),
                            chart_annual_ret=Markup(chart_annual_return_dynamic(futures_code)),
                            )
 
@@ -41,6 +43,7 @@ def chart_returns(futures_code):
 def chart_ann_vol(futures_code):
     return render_template('ann_vol.html', contract_family=futures_code,
                            chart_ann_vol=Markup(chart_ann_vol_dynamic(futures_code)),
+                           table_ann_vol=Markup(table_ann_vol_dynamic(futures_code)),
                            )
 
 
