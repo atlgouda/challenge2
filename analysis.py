@@ -15,6 +15,22 @@ def get_contract_family(contract_root, field='daily_return'):
     return raw_df.pivot(columns='code_name', values=field)
 
 
+def get_contract_family_daily(contract_root, field='largest_daily_return', field2='largest_daily_return_date', field3='code_name'):
+    contracts = '({})'.format(
+        ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
+    raw_df = pd.read_sql("select datadate, {}, {}, {} from futures where code_name in {}".format(
+        field, field2, field3, contracts), localhost, parse_dates=True, index_col='datadate')
+    return raw_df.pivot(columns='code_name', values=[field, field2, field3])
+
+
+def get_contract_family_annual(contract_root, field='largest_annual_return', field2='largest_annual_return_date', field3='code_name'):
+    contracts = '({})'.format(
+        ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
+    raw_df = pd.read_sql("select datadate, {}, {}, {} from futures where code_name in {}".format(
+        field, field2, field3, contracts), localhost, parse_dates=True, index_col='datadate')
+    return raw_df.pivot(columns='code_name', values=[field, field2, field3])
+
+
 def chart(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'):
     if not fields:
         fields = df.columns
@@ -60,6 +76,28 @@ def root_table(df, fields=None, title=None, layout=None, output_type=None):
                         fill=dict(color='#C2D4FF'),
                         align=['left'] * 5),
             cells=dict(values=[df.columns, df[fields].max()],
+                       fill=dict(color='#F5F8FF'),
+                       align=['left'] * 5)
+        ))
+
+    fig = go.Figure(data=traces)
+    return plot(fig, output_type=output_type)
+
+
+def root_table_multicolumn(df, fields=None, title=None, layout=None, output_type=None):
+    if not fields:
+        fields = df.columns
+    # if not title:
+    #     title = contract_root
+
+    traces = []
+
+    for field in fields:
+        traces.append(go.Table(
+            header=dict(values=['Code Name', title, 'Date'],
+                        fill=dict(color='#C2D4FF'),
+                        align=['left'] * 5),
+            cells=dict(values=[df[fields].max()[8:12], df[fields].max()[0:4], df[fields].max()[4:8]],
                        fill=dict(color='#F5F8FF'),
                        align=['left'] * 5)
         ))
@@ -121,12 +159,6 @@ def chart_ann_vol_dynamic(contract_root):
     return chart2(df, output_type='div', title=contract_root)
 
 
-def table_ann_vol_dynamic(contract_root):
-    df = get_contract_family('CME_{}'.format(contract_root),
-                             field='ann_vol').fillna(method='ffill')
-    return root_table(df, output_type='div', title='Annualized Volatility')
-
-
 def chart_tr_1yr_dynamic(contract_root):
     df = get_contract_family('CME_{}'.format(contract_root),
                              field='tr_1yr').fillna(method='ffill')
@@ -146,11 +178,25 @@ def chart_annual_return_dynamic(contract_root):
     return chart2(df, output_type='div', title=contract_root)
 
 
-def create_csv():
-    df = get_contract_family('CME_CL', field='largest_daily_return',).fillna(method='ffill')
-    df.to_csv('cl_largest_daily_returns.csv')
-    df2 = get_contract_family('CME_CL', field='largest_daily_return_date',).fillna(method='ffill')
-    df2.to_csv('cl_largest_daily_returns_date.csv')
+def table_ann_vol_dynamic(contract_root):
+    df = get_contract_family('CME_{}'.format(contract_root),
+                             field='ann_vol').fillna(method='ffill')
+    return root_table(df, output_type='div', title='Annualized Volatility')
 
 
-create_csv()
+def table_tr_1yr_dynamic(contract_root):
+    df = get_contract_family('CME_{}'.format(contract_root),
+                             field='tr_1yr').fillna(method='ffill')
+    return root_table(df, output_type='div', title='Trailing 1-year Volatility')
+
+
+def table_daily_dynamic(contract_root):
+    df = get_contract_family_daily('CME_{}'.format(contract_root),
+                                   field='largest_daily_return', field2='largest_daily_return_date', field3='code_name').fillna(method='ffill')
+    return root_table_multicolumn(df, output_type='div', title='Largest Daily Return')
+
+
+def table_annual_dynamic(contract_root):
+    df = get_contract_family_daily('CME_{}'.format(contract_root),
+                                   field='largest_annual_return', field2='largest_annual_return_date', field3='code_name').fillna(method='ffill')
+    return root_table_multicolumn(df, output_type='div', title='Largest Annual Return')
