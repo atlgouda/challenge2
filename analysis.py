@@ -49,15 +49,17 @@ def chart2(df, fields=None, title=None, layout=None, output_type=None, dtick='M1
 def root_table(df, fields=None, title=None, layout=None, output_type=None):
     if not fields:
         fields = df.columns
+    # if not title:
+    #     title = contract_root
 
     traces = []
 
     for field in fields:
         traces.append(go.Table(
-            header=dict(values=list(df.columns),
+            header=dict(values=['Code Name', title],
                         fill=dict(color='#C2D4FF'),
                         align=['left'] * 5),
-            cells=dict(values=[df[field]],
+            cells=dict(values=[df.columns, df[fields].max()],
                        fill=dict(color='#F5F8FF'),
                        align=['left'] * 5)
         ))
@@ -122,7 +124,7 @@ def chart_ann_vol_dynamic(contract_root):
 def table_ann_vol_dynamic(contract_root):
     df = get_contract_family('CME_{}'.format(contract_root),
                              field='ann_vol').fillna(method='ffill')
-    return root_table(df, output_type='div', title=contract_root)
+    return root_table(df, output_type='div', title='Annualized Volatility')
 
 
 def chart_tr_1yr_dynamic(contract_root):
