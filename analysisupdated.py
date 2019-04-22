@@ -11,7 +11,8 @@ def get_contract_family(contract_root, field='daily_return'):
     contracts = '({})'.format(
         ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
     raw_df = pd.read_sql("select datadate, code_name, {} from futures where code_name in {}".format(
-        field, contracts), localhost, parse_dates=True, index_col='datadate')
+        field, contracts), localhost, parse_dates=True)
+    # return raw_df
     return raw_df.pivot(columns='code_name', values=field)
 
 

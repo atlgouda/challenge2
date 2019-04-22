@@ -35,8 +35,7 @@ def pull_data(code_name, start='2005-01-01'):
     return to_save
 
 
-# df_daily = pull_data().iloc[:, [0, 5, 6]]
-# print(df_daily.head(10))
+# print(pull_data('CME_CL1'))
 
 
 def run():
