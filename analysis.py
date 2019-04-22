@@ -11,24 +11,24 @@ def get_contract_family(contract_root, field='daily_return'):
     contracts = '({})'.format(
         ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
     raw_df = pd.read_sql("select datadate, code_name, {} from futures where code_name in {}".format(
-        field, contracts), localhost, parse_dates=True, index_col='datadate')
+        field, contracts), localhost, parse_dates=True)
     return raw_df.pivot(columns='code_name', values=field)
 
 
-def get_contract_family_daily(contract_root, field='largest_daily_return', field2='largest_daily_return_date', field3='code_name'):
+def get_contract_family_daily(contract_root, field='largest_daily_return', return_date='largest_daily_return_date'):
     contracts = '({})'.format(
         ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
-    raw_df = pd.read_sql("select datadate, {}, {}, {} from futures where code_name in {}".format(
-        field, field2, field3, contracts), localhost, parse_dates=True, index_col='datadate')
-    return raw_df.pivot(columns='code_name', values=[field, field2, field3])
+    raw_df = pd.read_sql("select datadate, code_name, {}, {} from futures where code_name in {}".format(
+        field, return_date, contracts), localhost, parse_dates=True, index_col='datadate')
+    return raw_df.pivot(columns='code_name', values=[field, return_date])
 
 
-def get_contract_family_annual(contract_root, field='largest_annual_return', field2='largest_annual_return_date', field3='code_name'):
+def get_contract_family_annual(contract_root, field='largest_annual_return', return_date='largest_annual_return_date'):
     contracts = '({})'.format(
         ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
-    raw_df = pd.read_sql("select datadate, {}, {}, {} from futures where code_name in {}".format(
-        field, field2, field3, contracts), localhost, parse_dates=True, index_col='datadate')
-    return raw_df.pivot(columns='code_name', values=[field, field2, field3])
+    raw_df = pd.read_sql("select datadate, code_name, {}, {} from futures where code_name in {}".format(
+        field, return_date, contracts), localhost, parse_dates=True, index_col='datadate')
+    return raw_df.pivot(columns='code_name', values=[field, return_date])
 
 
 def chart(df, fields=None, title=None, layout=None, output_type=None, dtick='M1'):
@@ -75,7 +75,7 @@ def root_table(df, fields=None, title=None, layout=None, output_type=None):
             header=dict(values=['Code Name', title],
                         fill=dict(color='#C2D4FF'),
                         align=['left'] * 5),
-            cells=dict(values=[df.columns, df[fields].max()],
+            cells=dict(values=[df.columns, df[fields]],
                        fill=dict(color='#F5F8FF'),
                        align=['left'] * 5)
         ))
@@ -84,11 +84,9 @@ def root_table(df, fields=None, title=None, layout=None, output_type=None):
     return plot(fig, output_type=output_type)
 
 
-def root_table_multicolumn(df, fields=None, title=None, layout=None, output_type=None):
+def root_table_daily(df, fields=None, title=None, layout=None, output_type=None):
     if not fields:
         fields = df.columns
-    # if not title:
-    #     title = contract_root
 
     traces = []
 
@@ -97,7 +95,31 @@ def root_table_multicolumn(df, fields=None, title=None, layout=None, output_type
             header=dict(values=['Code Name', title, 'Date'],
                         fill=dict(color='#C2D4FF'),
                         align=['left'] * 5),
-            cells=dict(values=[df[fields].max()[8:12], df[fields].max()[0:4], df[fields].max()[4:8]],
+            cells=dict(values=[df.columns.get_level_values(1).drop_duplicates(),
+                               df.dropna().loc[:, 'largest_daily_return'].max(),
+                               df.dropna().loc[:, 'largest_daily_return_date'].max()],
+                       fill=dict(color='#F5F8FF'),
+                       align=['left'] * 5)
+        ))
+
+    fig = go.Figure(data=traces)
+    return plot(fig, output_type=output_type)
+
+
+def root_table_annual(df, fields=None, title=None, layout=None, output_type=None):
+    if not fields:
+        fields = df.columns
+
+    traces = []
+
+    for field in fields:
+        traces.append(go.Table(
+            header=dict(values=['Code Name', title, 'Date'],
+                        fill=dict(color='#C2D4FF'),
+                        align=['left'] * 5),
+            cells=dict(values=[df.columns.get_level_values(1).drop_duplicates(),
+                               df.dropna().loc[:, 'largest_annual_return'].max(),
+                               df.dropna().loc[:, 'largest_annual_return_date'].max()],
                        fill=dict(color='#F5F8FF'),
                        align=['left'] * 5)
         ))
@@ -192,11 +214,11 @@ def table_tr_1yr_dynamic(contract_root):
 
 def table_daily_dynamic(contract_root):
     df = get_contract_family_daily('CME_{}'.format(contract_root),
-                                   field='largest_daily_return', field2='largest_daily_return_date', field3='code_name').fillna(method='ffill')
-    return root_table_multicolumn(df, output_type='div', title='Largest Daily Return')
+                                   ).fillna(method='ffill')
+    return root_table_daily(df, output_type='div', title='Largest Daily Return')
 
 
 def table_annual_dynamic(contract_root):
-    df = get_contract_family_daily('CME_{}'.format(contract_root),
-                                   field='largest_annual_return', field2='largest_annual_return_date', field3='code_name').fillna(method='ffill')
-    return root_table_multicolumn(df, output_type='div', title='Largest Annual Return')
+    df = get_contract_family_annual('CME_{}'.format(contract_root),
+                                    ).fillna(method='ffill')
+    return root_table_annual(df, output_type='div', title='Largest Annual Return')

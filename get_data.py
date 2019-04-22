@@ -35,6 +35,10 @@ def pull_data(code_name, start='2005-01-01'):
     return to_save
 
 
+# df_daily = pull_data().iloc[:, [0, 5, 6]]
+# print(df_daily.head(10))
+
+
 def run():
     dfs = []
     for code_root in ['CME_CL', 'CME_NQ', 'CME_ES', 'CME_NG', 'CME_GC']:
