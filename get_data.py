@@ -35,9 +35,6 @@ def pull_data(code_name, start='2005-01-01'):
     return to_save
 
 
-# print(pull_data('CME_CL1'))
-
-
 def run():
     dfs = []
     for code_root in ['CME_CL', 'CME_NQ', 'CME_ES', 'CME_NG', 'CME_GC']:

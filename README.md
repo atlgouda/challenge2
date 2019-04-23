@@ -1,26 +1,14 @@
 # Graphing with Flask and Plotly
 
 ## To Begin
-Run "python get_data.py", then "python analysis.py"
+Run "python get_data.py"
 
 This will set up the SQL tables needed.
 
-## Timeline
-Created SQL tables with the following sample code: <br>
-```
-def get_annualized_vol(contract_root):
-    contracts = get_contract_family(contract_root).replace(np.nan, 0)
-    ann_vol_cont = (contracts.std() * math.sqrt(252))
-    ann_vol_sql = pd.DataFrame({'ann_vol': ann_vol_cont})
-    ann_vol_sql.to_sql("combined_ann_vol", localhost,
-                       if_exists='append', chunksize=250, index=True,
-                       dtype={'code_name': VARCHAR(ann_vol_sql.index.get_level_values('code_name').str.len().max())})
-    return ann_vol_sql
-```
 ## Plotly Charts
 I initially created plotly charts through their website by importing CSVs of tables.  I then used their GUI to adjust the specifications of each graph.
 
-I improved on this in the final version by using plotly's offline mode to have dynamic graphs and pages, making this project much easier to scale.  These were pulled from the mysql dataframes instead of CSVs.
+I improved on this in the final version by using plotly's offline mode to have dynamic graphs and tables, making this project much easier to scale.  These were pulled from the mysql raw dataframe instead of CSVs.  I then ran the calculations after the raw data was pulled.
 
 ![Imgur](https://i.imgur.com/oCjgX4Sl.png "Sample Graphs")
 
