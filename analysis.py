@@ -15,18 +15,7 @@ def get_contract_family(contract_root, field='daily_return'):
     return raw_df.pivot(columns='code_name', values=field)
 
 
-# print(get_contract_family('CME_ES').head())
-
-
-def get_contract_family_daily(contract_root, field='largest_daily_return', return_date='largest_daily_return_date'):
-    contracts = '({})'.format(
-        ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
-    raw_df = pd.read_sql("select datadate, code_name, {}, {} from futures where code_name in {}".format(
-        field, return_date, contracts), localhost, parse_dates=True, index_col='datadate')
-    return raw_df.pivot(columns='code_name', values=[field, return_date])
-
-
-def get_contract_family_annual(contract_root, field='largest_annual_return', return_date='largest_annual_return_date'):
+def get_contract_family_dated(contract_root, field='largest_daily_return', return_date='largest_daily_return_date'):
     contracts = '({})'.format(
         ','.join(["'{}{}'".format(contract_root, contract_no) for contract_no in range(1, 5)]))
     raw_df = pd.read_sql("select datadate, code_name, {}, {} from futures where code_name in {}".format(
@@ -155,12 +144,12 @@ def table_tr_1yr_dynamic(contract_root):
 
 
 def table_daily_dynamic(contract_root):
-    df = get_contract_family_daily('CME_{}'.format(contract_root),
+    df = get_contract_family_dated('CME_{}'.format(contract_root),
                                    ).fillna(method='ffill')
     return root_table_daily(df, output_type='div', title='Largest Daily Return')
 
 
 def table_annual_dynamic(contract_root):
-    df = get_contract_family_annual('CME_{}'.format(contract_root),
-                                    ).fillna(method='ffill')
+    df = get_contract_family_dated('CME_{}'.format(contract_root),
+                                   field='largest_annual_return', return_date='largest_annual_return_date').fillna(method='ffill')
     return root_table_annual(df, output_type='div', title='Largest Annual Return')
